@@ -1,60 +1,67 @@
-### Как запустить проект Yacut:
+# YaCut
 
-Клонировать репозиторий и перейти в него в командной строке:
+YaCut — Flask-сервис для создания коротких ссылок и асинхронной загрузки
+нескольких файлов на Яндекс Диск.
 
-```
-git clone 
-```
+## Запуск в Windows
 
-```
-cd yacut
-```
+Клонируйте репозиторий и перейдите в директорию проекта:
 
-Cоздать и активировать виртуальное окружение:
-
-```
-python3 -m venv venv
+```bash
+git clone https://github.com/RomanTanashkin/async-yacut.git
+cd async-yacut
 ```
 
-* Если у вас Linux/macOS
+Создайте и активируйте виртуальное окружение в Git Bash:
 
-    ```
-    source venv/bin/activate
-    ```
-
-* Если у вас windows
-
-    ```
-    source venv/scripts/activate
-    ```
-
-Установить зависимости из файла requirements.txt:
-
-```
-python3 -m pip install --upgrade pip
+```bash
+python -m venv venv
+source venv/Scripts/activate
 ```
 
-```
-pip install -r requirements.txt
+Установите зависимости:
+
+```bash
+python -m pip install -r requirements.txt
 ```
 
-Создать в директории проекта файл .env с четыремя переменными окружения:
+Создайте в корне проекта файл `.env`:
 
-```
+```text
 FLASK_APP=yacut
-FLASK_ENV=development
-SECRET_KEY=your_secret_key
-DB=sqlite:///db.sqlite3
+SECRET_KEY=replace-with-a-secret-key
+DATABASE_URI=sqlite:///db.sqlite3
+DISK_TOKEN=your-yandex-disk-oauth-token
 ```
 
-Создать базу данных и применить миграции:
+Создайте таблицы базы данных:
 
-```
-flask db upgrade
+```bash
+flask shell
 ```
 
-Запустить проект:
+В интерактивной консоли выполните:
 
+```python
+from yacut import db
+db.create_all()
+exit()
 ```
+
+Запустите приложение:
+
+```bash
 flask run
 ```
+
+## Проверка
+
+```bash
+pytest
+flake8 yacut config.py
+```
+
+API предоставляет два эндпоинта:
+
+- `POST /api/id/` — создать короткую ссылку;
+- `GET /api/id/<short_id>/` — получить исходную ссылку.

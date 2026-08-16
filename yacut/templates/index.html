@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}YaCut — укоротитель ссылок{% endblock %}
+
+{% block content %}
+  <section class="container my-5 px-4">
+    <h1 class="text-center"><span class="brand">Ya</span>Cut</h1>
+    <p class="text-center my-4">
+      Создайте короткую ссылку автоматически или предложите свой вариант
+    </p>
+    <div class="row my-3">
+      <div class="col-sm"></div>
+      <div class="col-sm">
+        {% with messages = get_flashed_messages() %}
+          {% for message in messages %}
+            <p class="text-danger">{{ message }}</p>
+          {% endfor %}
+        {% endwith %}
+        <form method="post" novalidate>
+          {{ form.csrf_token }}
+          {{ form.original_link(class="form-control form-control-lg py-2 mb-3",
+                                placeholder="Длинная ссылка") }}
+          {% for error in form.original_link.errors %}
+            <p class="text-danger">{{ error }}</p>
+          {% endfor %}
+          {{ form.custom_id(class="form-control form-control-lg py-2 mb-3",
+                            placeholder="Ваш вариант короткой ссылки") }}
+          {% for error in form.custom_id.errors %}
+            <p class="text-danger">{{ error }}</p>
+          {% endfor %}
+          {{ form.submit(class="btn btn-primary") }}
+        </form>
+      </div>
+      <div class="col-sm"></div>
+    </div>
+    {% if short_link %}
+      <h5 class="text-center">
+        Ваша новая ссылка готова:
+        <a href="{{ short_link }}">{{ short_link }}</a>
+      </h5>
+    {% endif %}
+  </section>
+{% endblock %}
