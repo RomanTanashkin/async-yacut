@@ -9,6 +9,14 @@ API_HOST = 'https://cloud-api.yandex.net/'
 API_VERSION = 'v1'
 UPLOAD_LINK_URL = f'{API_HOST}{API_VERSION}/disk/resources/upload'
 DOWNLOAD_LINK_URL = f'{API_HOST}{API_VERSION}/disk/resources/download'
+YANDEX_DISK_PATH_PREFIX = '/'
+
+
+def is_yandex_disk_path(path):
+    return (
+        isinstance(path, str)
+        and path.startswith(YANDEX_DISK_PATH_PREFIX)
+    )
 
 
 def get_auth_headers():

@@ -1,5 +1,6 @@
 import re
 from http import HTTPStatus
+from urllib.parse import urlparse
 
 from flask import jsonify, request, url_for
 
@@ -8,6 +9,7 @@ from yacut.api_errors import InvalidAPIUsage
 from yacut.constants import (
     DUPLICATED_SHORT_ID_MESSAGE,
     INVALID_SHORT_ID_MESSAGE,
+    INVALID_URL_MESSAGE,
     MAX_CUSTOM_ID_LENGTH,
     RESERVED_SHORT_IDS,
     SHORT_ID_PATTERN,
@@ -24,6 +26,22 @@ def is_valid_custom_id(custom_id):
     )
 
 
+def is_valid_url(url):
+    if not isinstance(url, str) or not url or any(
+        character.isspace() for character in url
+    ):
+        return False
+    try:
+        parsed_url = urlparse(url)
+        parsed_url.port
+    except ValueError:
+        return False
+    return (
+        parsed_url.scheme in ('http', 'https')
+        and parsed_url.hostname is not None
+    )
+
+
 @app.route('/api/id/', methods=['POST'])
 def create_short_link():
     data = request.get_json(silent=True)
@@ -31,6 +49,8 @@ def create_short_link():
         raise InvalidAPIUsage('Отсутствует тело запроса')
     if not isinstance(data, dict) or 'url' not in data:
         raise InvalidAPIUsage('"url" является обязательным полем!')
+    if not is_valid_url(data['url']):
+        raise InvalidAPIUsage(INVALID_URL_MESSAGE)
 
     custom_id = data.get('custom_id')
     if custom_id:

@@ -13,3 +13,4 @@ DUPLICATED_SHORT_ID_MESSAGE = (
 INVALID_SHORT_ID_MESSAGE = (
     'Указано недопустимое имя для короткой ссылки'
 )
+INVALID_URL_MESSAGE = 'Указана некорректная ссылка'

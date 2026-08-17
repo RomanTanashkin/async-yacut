@@ -8,7 +8,11 @@ from yacut.constants import (
 from yacut.forms import FileUploadForm, URLMapForm
 from yacut.models import URLMap
 from yacut.utils import get_unique_short_id
-from yacut.yandex_disk import get_download_link, upload_files
+from yacut.yandex_disk import (
+    get_download_link,
+    is_yandex_disk_path,
+    upload_files,
+)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -73,6 +77,6 @@ async def files_view():
 @app.route('/<string:short_id>')
 async def redirect_view(short_id):
     url_map = URLMap.query.filter_by(short=short_id).first_or_404()
-    if url_map.original.startswith(('http://', 'https://')):
-        return redirect(url_map.original)
-    return redirect(await get_download_link(url_map.original))
+    if is_yandex_disk_path(url_map.original):
+        return redirect(await get_download_link(url_map.original))
+    return redirect(url_map.original)
